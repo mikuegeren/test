@@ -54,6 +54,8 @@
 </head>
 <body>
     <header>
+        <!-- 新增退出按钮 -->
+        <button id="logout-btn" style="position:absolute;right:40px;top:40px;background:#ff5252;color:#fff;border:none;border-radius:6px;padding:8px 22px;font-size:1em;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:background 0.2s;">退出</button>
         <h1>数据趋势可视化平台</h1>
         <p>基于 ECharts 的 1-12 月数据趋势大屏</p>
     </header>
@@ -130,6 +132,12 @@
         window.addEventListener('resize', function () {
             myChart.resize();
         });
+
+        // 退出按钮功能
+        document.getElementById('logout-btn').onclick = function() {
+            localStorage.removeItem('currentUser');
+            window.location.href = "login.html";
+        };
     </script>
 </body>
 </html>

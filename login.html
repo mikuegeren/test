@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录 - 数据趋势可视化平台</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", "微软雅黑", Arial, sans-serif;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: rgba(255,255,255,0.98);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 48px 36px 36px 36px;
+            width: 350px;
+            max-width: 96vw;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            color: #232526;
+            letter-spacing: 2px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #f8f8f8;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px 0;
+            background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #005fa3 0%, #0096c7 100%);
+        }
+        .switch-link {
+            display: block;
+            text-align: right;
+            font-size: 0.95em;
+            color: #007bff;
+            cursor: pointer;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+        .msg {
+            text-align: center;
+            color: #d32f2f;
+            margin-bottom: 10px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 id="form-title">用户登录</h2>
+        <div class="msg" id="msg"></div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn" id="login-btn">登录</button>
+            <span class="switch-link" id="to-register">没有账号？注册</span>
+            <span class="switch-link" id="to-reset">忘记密码？</span>
+        </form>
+        <form id="register-form" style="display:none;">
+            <div class="form-group">
+                <label for="reg-username">用户名</label>
+                <input type="text" id="reg-username" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">密码</label>
+                <input type="password" id="reg-password" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-confirm">确认密码</label>
+                <input type="password" id="reg-confirm" required>
+            </div>
+            <button type="submit" class="btn">注册</button>
+            <span class="switch-link" id="to-login1">已有账号？登录</span>
+        </form>
+        <form id="reset-form" style="display:none;">
+            <div class="form-group">
+                <label for="reset-username">用户名</label>
+                <input type="text" id="reset-username" required>
+            </div>
+            <div class="form-group">
+                <label for="reset-password">新密码</label>
+                <input type="password" id="reset-password" required>
+            </div>
+            <div class="form-group">
+                <label for="reset-confirm">确认新密码</label>
+                <input type="password" id="reset-confirm" required>
+            </div>
+            <button type="submit" class="btn">修改密码</button>
+            <span class="switch-link" id="to-login2">返回登录</span>
+        </form>
+    </div>
+    <script>
+        // 简单本地存储模拟
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users') || '{}');
+        }
+        function setUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        function showMsg(msg) {
+            document.getElementById('msg').innerText = msg || '';
+        }
+        // 切换表单
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const resetForm = document.getElementById('reset-form');
+        document.getElementById('to-register').onclick = function() {
+            loginForm.style.display = 'none';
+            registerForm.style.display = '';
+            resetForm.style.display = 'none';
+            document.getElementById('form-title').innerText = '用户注册';
+            showMsg('');
+        };
+        document.getElementById('to-login1').onclick = document.getElementById('to-login2').onclick = function() {
+            loginForm.style.display = '';
+            registerForm.style.display = 'none';
+            resetForm.style.display = 'none';
+            document.getElementById('form-title').innerText = '用户登录';
+            showMsg('');
+        };
+        document.getElementById('to-reset').onclick = function() {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'none';
+            resetForm.style.display = '';
+            document.getElementById('form-title').innerText = '修改密码';
+            showMsg('');
+        };
+        // 登录
+        loginForm.onsubmit = function(e) {
+            e.preventDefault();
+            const users = getUsers();
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            if (users[u] && users[u] === p) {
+                showMsg('登录成功！');
+                setTimeout(() => { window.location.href = "index.html"; }, 800);
+            } else {
+                showMsg('用户名或密码错误');
+            }
+        };
+        // 注册
+        registerForm.onsubmit = function(e) {
+            e.preventDefault();
+            const users = getUsers();
+            const u = document.getElementById('reg-username').value.trim();
+            const p = document.getElementById('reg-password').value;
+            const c = document.getElementById('reg-confirm').value;
+            if (!u || !p) return showMsg('请填写完整信息');
+            if (p !== c) return showMsg('两次密码不一致');
+            if (users[u]) return showMsg('用户名已存在');
+            users[u] = p;
+            setUsers(users);
+            showMsg('注册成功，请登录');
+            setTimeout(() => {
+                loginForm.style.display = '';
+                registerForm.style.display = 'none';
+                resetForm.style.display = 'none';
+                document.getElementById('form-title').innerText = '用户登录';
+                showMsg('');
+            }, 1000);
+        };
+        // 修改密码
+        resetForm.onsubmit = function(e) {
+            e.preventDefault();
+            const users = getUsers();
+            const u = document.getElementById('reset-username').value.trim();
+            const p = document.getElementById('reset-password').value;
+            const c = document.getElementById('reset-confirm').value;
+            if (!users[u]) return showMsg('用户名不存在');
+            if (p !== c) return showMsg('两次密码不一致');
+            users[u] = p;
+            setUsers(users);
+            showMsg('密码修改成功，请登录');
+            setTimeout(() => {
+                loginForm.style.display = '';
+                registerForm.style.display = 'none';
+                resetForm.style.display = 'none';
+                document.getElementById('form-title').innerText = '用户登录';
+                showMsg('');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
