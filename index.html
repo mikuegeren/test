@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts 趋势图 1-12月</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        #main { width: 800px; height: 400px; margin: 40px auto; }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom);
+        var option = {
+            title: {
+                text: '1-12月趋势图'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '数据',
+                type: 'line',
+                data: [120, 132, 101, 134, 90, 230, 210, 180, 150, 200, 170, 250],
+                smooth: true
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
